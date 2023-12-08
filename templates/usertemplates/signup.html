@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign up</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/elegant-icons.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/magnific-popup.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/nice-select.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/slicknav.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/style.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/main.css" %}" type="text/css">
+
+
+</head>
+
+<body>
+{% comment %} navbar {% endcomment %}
+{% include "./includes/navbar.html" %}
+{% comment %} content {% endcomment %}
+{% block content %}
+<div class="container mt-3">
+<div class="row justify-content-center">
+{% comment %} <div class="col-md-6">
+    <img src="{% static "img/logos.png" %}">
+
+</div> {% endcomment %}
+<div class="col-md-4 ">
+    <h3 class="text-black text-center">Sign up</h3>
+   {% for message in messages %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+  <strong></strong> {{message}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+        {% endfor %}    
+        
+
+<form action="/signup" method="post" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <label class="text-black mt-3">FirstName</label>
+    <div class="form-group">
+        <input id='firstname' type="text" class="form-control" name="firstname" required>
+    </div>
+    <label class="text-black mt-2">LastName</label>
+    <div class="form-group">
+        <input id= 'lastname' type="text" class="form-control" name="lastname" required>
+    </div>
+    <label class="text-black mt-2">Username</label>
+    <div class="form-group">
+        <input id='username' type="text" class="form-control" name="username" required>
+    </div>
+    <label class="text-black mt-2">Email</label>
+    <div class="form-group">
+        <input id='email' type="email" class="form-control" name="email" required>
+    </div>
+    <label class="text-black mt-2">Password</label>
+    <div class="form-group">
+        <input id='pass1' type="password" class="form-control" name="pass1" required>
+    </div>
+    <p id="pass1Error"></p>
+    <label class="text-black mt-2">ConfirmPassword</label>
+    <div class="form-group">
+        <input id='pass2' type="password" class="form-control" name="pass2" required>
+    </div>
+    <p id="pass2Error"></p>
+    <div class="d-grid gap-2 mt-4">
+        <button class="btn btn-dark" type="submit">Sign Up</button>
+    </div>
+</form>
+<br>
+<p>Already User? <a href="/login">Login</a></p>
+
+</div>
+
+</div>
+
+<script>
+    function validateForm() {
+        
+        var firstname = document.getElementById('firstname').value.trim();
+        var lastname = document.getElementById('lastname').value.trim();
+        var username = document.getElementById('username').value.trim();
+        var pass1 = document.getElementById('pass1').value.trim();
+        var pass2 = document.getElementById('pass2').value.trim();
+        
+
+        // Reset error messages
+        document.getElementById('pass1Error').innerText = "";
+        document.getElementById('pass2Error').innerText = "";
+
+        // Password validation rules
+        var passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{8,}$/;
+
+        // Validate first name, last name, and username (can be customized based on your requirements)
+        if (firstname === "" || lastname === "" || username === "") {
+            alert("Please fill out all required fields.");
+            return false;
+        }
+
+        // Validate password
+        if (!passwordRegex.test(pass1)) {
+            document.getElementById('pass1Error').innerText = "Password must be at least 8 characters long and contain at least one letter and one digit.";
+            return false;
+        }
+
+        // Confirm password
+        if (pass1 !== pass2) {
+            document.getElementById('pass2Error').innerText = "Passwords do not match.";
+            return false;
+        }
+
+        // Trim spaces and create formData object
+        var csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        var formData = {
+            'csrfmiddlewaretoken': csrf_token,
+            'firstname': firstname,
+            'lastname': lastname,
+            'username': username,
+            'email': document.getElementById('email').value.trim(), // Add this line
+            'pass1': pass1,
+            'pass2': pass2,
+            // Add other form fields as needed...
+        };
+
+        // Form is valid
+        alert("Sign up successful!");
+
+        // Now you can send formData to the server using AJAX or other methods.
+
+        return true;
+    }
+</script>
+
+
+</body>
+</html>
+
+
+{% endblock  %}
+

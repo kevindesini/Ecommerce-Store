@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Product</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        div {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea,select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Add Product</h1>
+        <form method="post" action="/addproduct" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <label for="product_name">Product Name:</label>
+            <input type="text" id="product_name" name="product_name" required><br>
+        
+            <label for="product_category">Product Category:</label>
+            {% comment %} <input type="text" id="product_category" name="product_category" required><br> {% endcomment %}
+
+             
+                  <select class="form-control" id="category_id" name="category_id">
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.category_name }}</option>
+                                {% endfor %}
+                            </select>        
+             
+            <label for="product_description">Product Description:</label><br>
+            <textarea id="product_description" name="product_description" rows="4" required></textarea><br>
+        
+            <label for="product_price">Product Price:</label>
+            <input type="text" id="product_price" name="product_price" required><br>
+
+            <label for="product_stock">Product Stock:</label>
+            <input type="text" id="product_stock" name="product_stock" required><br>
+        
+            <label for="product_slug">Product Slug:</label>
+            <input type="text" id="product_slug" name="product_slug" required><br>
+        
+            <label for="product_image">Product Image:</label>
+            <input type="file" id="product_image" name="product_image" accept="image/*" required><br>
+        
+            <img id="image-preview" src="#" alt="Image Preview">
+        
+            <button type="submit" >Add Product</button>
+        </form>
+    </body>
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.querySelector("form");
+
+        form.addEventListener("submit", function (event) {
+            var errorMessages = [];
+
+            // Trim extra spaces from text inputs
+            var productNameInput = document.getElementById("product_name");
+            var trimmedProductName = productNameInput.value.trim();
+            if (productNameInput.value !== trimmedProductName) {
+                productNameInput.value = trimmedProductName;
+                errorMessages.push("Product Name cannot start or end with spaces. Leading and trailing spaces have been removed.");
+            }
+
+            var slugInput = document.getElementById("product_slug");
+            var trimmedSlug = slugInput.value.trim();
+            if (slugInput.value !== trimmedSlug) {
+                slugInput.value = trimmedSlug;
+                errorMessages.push("Slug cannot start or end with spaces. Leading and trailing spaces have been removed.");
+            }
+
+            var descriptionInput = document.getElementById("product_description");
+            descriptionInput.value = descriptionInput.value.trim();
+
+            // Validate price and stock to be non-negative integers
+            var priceInput = document.getElementById("product_price");
+            var trimmedPrice = priceInput.value.trim();
+            if (parseInt(trimmedPrice) < 0) {
+                errorMessages.push("Price must be a non-negative integer.");
+            } else {
+                priceInput.value = trimmedPrice;
+            }
+
+            var stockInput = document.getElementById("product_stock");
+            var trimmedStock = stockInput.value.trim();
+            if ( parseInt(trimmedStock) < 0) {
+                errorMessages.push("Stock must be a non-negative integer.");
+            } else {
+                stockInput.value = trimmedStock;
+            }
+
+            // Validate file type for image input
+            var imagesInput = document.getElementById("product_image");
+            var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+            if (imagesInput.value && !allowedExtensions.exec(imagesInput.value)) {
+                errorMessages.push("Please upload a valid image file (JPEG or PNG).");
+            }
+
+            // Display all error messages
+            if (errorMessages.length > 0) {
+                alert(errorMessages.join("\n"));
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    });
+</script>
+
+
+    </div>

@@ -1,0 +1,201 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+.col-lg-8 {
+    -ms-flex: 0 0 66.666667%;
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+    margin-top: 20px;
+  }
+</style>
+{% comment %} {%include '../messages.html'%} {% endcomment %}
+<section class="section-content padding-y bg">
+	<div class="container">
+
+		<!-- ============================ COMPONENT 1 ================================= -->
+		<h4 class="text-center mb-20">Review Your Order and Make Payment</h4>
+		<div class="row">
+
+			<aside class="col-md-12 col-lg-3">
+				<div class="card" style="margin-bottom: px;height: 250px;">
+					<h5 class="card-header">Billing Address</h5>
+					<div class="card-body">
+						<p class="card-text mb-0">{{address.firstname}} {{address.lastname}}</p>
+						<p class="card-text mb-0">{{address.email}}</p>
+						
+						<p class="card-text mb-0">{{order.city}}, {{order.state}}</p>
+						<p class="card-text mb-0">{{order.country}}</p>
+						<p class="card-text mb-0">{{address.mobile}}</p>
+						<br>
+						{% if order.order_note %}
+						<b>Order Note: </b> {{order.order_note}}
+						{% endif %}
+
+
+					</div>
+				</div>
+				<div class="card" style="margin-top:10px;">
+					<h5 class="card-header">Payment Method</h5>
+					<div class="card-body">
+						<p class="card-text">Cash on Delivery</p>
+						<p class="card-text">Wallet</p>
+						<p class="card-text">PayPal</p>
+
+					</div>
+				</div>
+				<div class="card">
+					
+				</div>
+
+			</aside> <!-- col.// -->
+			<aside class="col-md-12 col-lg-8">
+
+				<div class="card">
+					
+						<br>
+						<h5 class="card-header">Review Products</h5>
+					<div class="card-body">
+						<table class="table table-borderless table-shopping-cart">
+							<thead class="text-muted">
+								<tr class="small text-uppercase">
+									<th scope="col" style="text-align: center;">Product Image</th>
+									<th scope="col"  style="text-align: center;">Product details</th>
+									<th scope="col" width="120" style="text-align: center;">Quantity</th>
+									<th scope="col" width="120" style="text-align: center;">Price</th>
+									<th scope="col" width="120" style="text-align: center;">Total Price</th>
+
+								</tr>
+							</thead>
+							<tbody>
+
+								{% for cart_item in cart_items %}
+								<tr>
+									<td style="text-align: center;">
+										<figure class="itemside align-items-center">
+											<div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm" width="80"></div>
+											<figcaption class="info">
+												
+												<p class="text-muted small">
+													{% if cart_item.variations.all %}
+													{% for item in cart_item.variations.all %}
+													{{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+													{% endfor %}
+													{% endif %}
+												</p>
+											</figcaption>
+										</figure>
+									</td>
+									<td style="text-align: center;">
+										<!-- col.// -->
+										<ul>
+											<strong><li style="display: inline;">{{ cart_item.product.product_name }}</li></strong>
+											<br>
+											<li style="display: inline;">Colour : {{cart_item.variations.Color_id.color}}</li>
+											<br>
+											<li style="display: inline;">Size : "{{cart_item.variations.size}}"inch</li>
+										</ul>		
+									</td>
+									<td style="text-align: center;">
+										<!-- col.// -->
+										<label for="" >{{cart_item.quantity}}</label>
+									</td>
+									<td style="text-align: center;">
+										<div class="price-wrap">
+											
+											<small class="text-muted"> $ {{ cart_item.variations.price }} each </small>
+										</div> <!-- price-wrap .// -->
+									</td>
+									<td style="text-align: center;">
+										<div class="price-wrap">
+											<var class="price">$ <span id="total_{{ cart_item.id }}"></span></var>
+											
+										</div> <!-- price-wrap .// -->
+									</td>
+
+								</tr>
+								{% endfor %}
+
+							</tbody>
+						</table>
+						<div class="card-body">
+						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
+							<dt>Total price:</dt>
+							<dd class="text-right">$ {{total}}</dd>
+						</dl>
+						{% comment %} <dl class="dlist-align" style="display: flex;justify-content: space-between;">
+							<dt>Tax:</dt>
+							<dd class="text-right"> $ {{tax}}</dd>
+						</dl>
+						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
+							<dt>Coupon Amount:</dt>
+							<dd class="text-right text-success" id="coupon-amount">$ {{ discount_price }}</dd>
+						</dl> {% endcomment %}
+						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
+							<dt>Grand Total:</dt>
+							<dd class="text-right text-dark b" id="grand-total"><strong>$ {{grand_total}}</strong></dd>
+						</dl>
+						<hr>
+						<div class="d-grid gap-2">
+							<a href="{% url 'cashondelivery' order.id %}" onclick="return confirm('Are you sure you want this items by Cash On Delivery?')" class="btn btn-primary"> Cash on Delivery</a>
+						</div>
+
+					</div>
+{% comment %} 						
+						<form method="POST" action="{% url 'wallet_payment' order.id %}">
+							{% csrf_token %}
+							<input type="hidden" name="grand_total" value="{{ grand_total }}">
+							<input type="hidden" name="discount_price" value="{{ discount_price }}"> 
+							
+							<!-- Other form fields here -->
+							<button type="submit" class="btn btn-warning col-12">
+								<i><strong class="text-lg">Wallet Payment</strong></i>
+							</button>
+						</form>
+						<br>
+						<div id="paypal-button-container">
+							<!-- PayPal Button Will Load -->
+						</div> {% endcomment %}
+
+					</div> <!-- card-body.// -->
+				</div> <!-- card.// -->
+				{% comment %} <div class="discount__content">
+					<h6>Discount codes</h6>
+					<form method = 'POST' action="{%url 'coupon_check'%}">
+						{% csrf_token %}
+						<input name='order_id' type="hidden" value={{order.id}}>
+						<input type="text" name='coupon_obj' placeholder="Enter your coupon code">
+						<button type="submit" class="site-btn">Apply</button>
+					</form>
+				</div> {% endcomment %}
+			</aside> <!-- col.// -->
+
+
+		</div> <!-- row.// -->
+
+		<!-- ============================ COMPONENT 1 END .// ================================= -->
+
+	</div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+<!-- Add this script to your payment success page -->
+  
+
+
+<script>
+    // Loop through cart items and calculate and display total using JavaScript
+    {% for cart_item in cart_items %}
+    var price = {{ cart_item.variations.price }};
+    var quantity = {{ cart_item.quantity }};
+    var total = price * quantity;
+    var totalElement = document.getElementById("total_{{ cart_item.id }}");
+    totalElement.textContent = total;
+    {% endfor %}
+</script>
+
+
+
+
+{% endblock %}

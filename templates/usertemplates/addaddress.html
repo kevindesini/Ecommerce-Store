@@ -1,0 +1,141 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Address - Your Ecommerce Website</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <style>
+        /* Style the anchor tag to look like a button */
+        .button {
+            display: inline-block;
+            padding: 10px 20px; /* Adjust the padding as needed */
+            background-color: #007bff; /* Button background color */
+            color: #fff; /* Button text color */
+            text-decoration: none; /* Remove underline from anchor tag */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Add pointer cursor on hover */
+        }
+
+        /* Style the anchor tag on hover */
+        .button:hover {
+            background-color: #0056b3; /* Change background color on hover */
+        }
+
+    </style>
+</head>
+
+<body>
+    <section style="background-color: #ffffff;">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Add Address</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form method="post" action="/submitaddress" onsubmit="return validateForm()" >
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-sm-6">
+                                        <label for="firstname">First Name</label>
+                                        <input type="text" class="form-control" id="firstname" name="firstname"
+                                            required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Last Name</label>
+                                        <input type="text" class="form-control" id="lastname" name="lastname" required>
+                                    </div>
+                                </div>
+                                <div class="form-row mt-3">
+                                    <div class="col-sm-6">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="phone">Mobile</label>
+                                        <input type="tel" class="form-control" id="mobile" name="mobile" required>
+                                    </div>
+                                </div>
+                                <div class="form-row mt-3">
+                                    <div class="col-sm-12">
+                                        <label for="homeaddress">Home Address</label>
+                                        <textarea class="form-control" id="homeaddress" name="homeaddress"
+                                            rows="3" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-row mt-3">
+                                    <div class="col-sm-6">
+                                        <label for="city">City</label>
+                                        <input type="text" class="form-control" id="city" name="city" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="pincode">Pin Code</label>
+                                        <input type="text" class="form-control" id="pincode" name="pincode" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="button mt-3">Add Address</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Add any additional content or messages here -->
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="" async defer></script>
+</body>
+
+</html>
+<script>
+    function validateForm() {
+        var firstname = document.getElementById("firstname").value.trim();
+        var lastname = document.getElementById("lastname").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var phone = document.getElementById("phone").value.trim();
+        var homeaddress = document.getElementById("homeaddress").value.trim();
+        var city = document.getElementById("city").value.trim();
+        var pincode = document.getElementById("pincode").value.trim();
+
+        if (firstname === "" || lastname === "" || email === "" || phone === "" || homeaddress === "" || city === "" || pincode === "") {
+            alert("Fields should not be empty");
+            return false; // Prevent form submission
+        }    
+           
+            if (phone.toString().length < 10 || phone.toString().length >10) {
+            alert("Enter Valid Phone Number");
+            return false; // Prevent form submission
+            }
+
+            if (pincode.toString().length < 6 || pincode.toString().length >6) {
+                alert("Enter Valid Pincode");
+                return false; // Prevent form submission
+                }
+        
+        return true; // Allow form submission
+    }
+</script>
+
+{% endblock %}

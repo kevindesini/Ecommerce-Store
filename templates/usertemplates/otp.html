@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> OTP </title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/elegant-icons.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/magnific-popup.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/nice-select.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/slicknav.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/style.css" %}" type="text/css">
+</head>
+
+<body>
+{% comment %} navbar {% endcomment %}
+{% include "./includes/navbar.html" %}
+{% comment %} content {% endcomment %}
+{% block content %}
+<div class="container mt-3">
+<div class="row justify-content-center">
+<div class="col-md-4">
+<h3 class="text-black text-center">OTP Verification</h3>
+{% comment %} {% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+<strong></strong> {{message}}
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %} {% endcomment %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+<strong></strong> {{message}}
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<form id='otpForm' action="/otp" method="post">{% csrf_token %}
+<div class="form-group">
+    <input type="text" id='otpInput' class="form-control" name="enteredotp" placeholder='Enter OTP' Required>
+    <input name="email" value="{{email}}">
+    <button class="btn-btn-light" type="submit" id="verifyOTPButton">Verify OTP</button> 
+    <p>OTP will expire in: <span id="timer"></span></p>
+
+<button id="resendButton" onclick="resendOTP()" disabled>Resend OTP</button>  
+ 
+</div>
+{% comment %} <div class="d-grid gap-2 mt-4">
+    <button class="btn btn-dark" type="submit">Login</button>
+    
+</div> {% endcomment %}
+
+</form>
+ 
+<script>
+    let otpTimer;
+    let otpExpirationTime = {{ otp_expiry }};  // Get the OTP expiry time from the context
+
+    // Function to start the timer and update the display
+    function updateTimer() {
+        let seconds = otpExpirationTime;
+        otpTimer = setInterval(function () {
+            document.getElementById('timer').innerHTML = `${seconds}s`;
+
+            if (seconds <= 0) {
+                clearInterval(otpTimer);
+                document.getElementById('timer').innerHTML = "Expired";
+                enableResendButton(true);
+            }
+
+            seconds--;
+        }, 1000);
+    }
+
+    // Function to enable/disable the resend button
+    function enableResendButton(enable) {
+        document.getElementById('resendButton').disabled = !enable;
+    }
+
+    // Function to resend OTP
+   function resendOTP() {
+        // Trigger a GET request to the Django view handling OTP resend
+        fetch('/resend_otp/', { method: 'GET' })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Resending OTP...");
+                    // You might want to update the timer and UI after successfully resending OTP
+                    otpExpirationTime = {{ otp_expiry }};
+                    updateTimer();
+                    enableResendButton(false);
+                } else {
+                    console.error("Failed to resend OTP");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    // Start the timer on page load
+    updateTimer();
+</script>
+</div>
+
+</div>
+
+
+</div>
+
+</body>
+
+{% endblock  %}
+{% comment %} footer     {% endcomment %}
+
+</html>

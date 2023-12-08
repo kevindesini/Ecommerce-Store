@@ -1,0 +1,147 @@
+
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+
+        .container {
+            padding-top: 50px;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="container py-5">
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/checkout">Checkout</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Address</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form method="post" action="{% url 'editaddress' id=address.id %}" onsubmit="return validateForm()">
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-sm-6">
+                                        <label for="firstname">First Name</label>
+                                        <input type="text" class="form-control" id="firstname" name="firstname" value="{{ address.firstname }}" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Last Name</label>
+                                        <input type="text" class="form-control" id="lastname" name="lastname" value="{{ address.lastname }}" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Email</label>
+                                        <input type="text" class="form-control" id="email" name="email" value="{{ address.email }}" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Mobile</label>
+                                        <input type="text" class="form-control" id="mobile" name="mobile" value="{{ address.mobile }}" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Home address</label> 
+                                         <textarea class="form-control" id="homeaddress" name="homeaddress" value="{{ address.homeaddress}}"
+                                            rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">City</label>
+                                        <input type="text" class="form-control" id="city" name="city" value="{{ address.city }}" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname">Pin Code</label>
+                                        <input type="text" class="form-control" id="pincode" name="pincode" value="{{ address.pincode }}" required>
+                                    </div>
+                                </div>
+                                <!-- Include other address fields here with their corresponding values -->
+                                <button type="submit" class="button mt-3">Update Address</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Add any additional content or messages here -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+<script>
+    function validateForm() {
+        var firstname = document.getElementById('firstname').value.trim();
+        var lastname = document.getElementById('lastname').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var mobile = document.getElementById('mobile').value.trim();
+        var homeaddress = document.getElementById('homeaddress').value.trim();
+        var city = document.getElementById('city').value.trim();
+        var pincode = document.getElementById('pincode').value.trim();
+
+        // Check if any of the required fields is empty
+        if (firstname === '' || lastname === '' || email === '' || mobile === '' || homeaddress === '' || city === '' || pincode === '') {
+            alert('All fields are required');
+            return false;
+        }
+
+        // Validate email format
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address');
+            return false;
+        }
+
+        // Validate mobile format
+        var mobileRegex = /^[0-9]{10}$/;
+        if (!mobileRegex.test(mobile)) {
+            alert('Please enter a valid 10-digit mobile number');
+            return false;
+        }
+
+        // Add more validation rules as needed
+
+        // If all validations pass, return true to submit the form
+        return true;
+    }
+</script>
+
+
+{% endblock %}

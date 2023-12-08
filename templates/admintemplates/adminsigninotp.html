@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Admin OTP </title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/elegant-icons.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/magnific-popup.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/nice-select.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/slicknav.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "css/style.css" %}" type="text/css">
+</head>
+
+<body>
+{% comment %} navbar {% endcomment %}
+{% comment %} {% include "./includes/navbar.html" %} {% endcomment %}
+{% comment %} content {% endcomment %}
+{% block content %}
+<div class="container mt-3">
+<div class="row justify-content-center">
+<div class="col-md-4">
+<h3 class="text-black text-center">OTP Verification</h3>
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+<strong></strong> {{message}}
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% comment %} {% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+<strong></strong> {{message}}
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %} {% endcomment %}
+<form id='otpForm' action="/adminotp" method="post">{% csrf_token %}
+<div class="form-group">
+    <input type="text" id='otpInput' class="form-control" name="enteredotp" placeholder='Enter OTP' Required>
+    <input name="email" value="{{email}}">
+    <button class="btn-btn-light" type="submit" id="verifyOTPButton">Verify OTP</button>   
+ 
+</div>
+<div class="d-grid gap-2 mt-4">
+    <button class="btn btn-dark" type="submit">Login</button>
+</div>
+
+</form>
+ <script>
+        // Add your JavaScript code for OTP verification and login here
+        document.getElementById("verifyOTPButton").addEventListener("click", function() {
+            // Add logic to verify the entered OTP
+            // If OTP is valid, show the "Login" button
+            document.getElementById("loginButton").style.display = "block";
+        });
+
+        document.getElementById("loginButton").addEventListener("click", function() {
+            // Add logic to handle the login process
+            // Redirect the user to the login page or perform any necessary actions
+        });
+    </script>
+
+
+
+</div>
+
+</div>
+
+
+</div>
+</body>
+
+{% endblock  %}
+{% comment %} footer     {% endcomment %}
+
+</html>

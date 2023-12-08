@@ -1,0 +1,117 @@
+2<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Category</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        div {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Add Category</h1>
+        <form method="post" action="/addcategory">
+            {% csrf_token %}
+            <label for="category_name">Category Name:</label>
+            <input type="text" id="category_name" name="category_name" required><br>
+
+            <label for="category_slug">Category Slug:</label>
+            <input type="text" id="category_slug" name="category_slug" required><br>
+
+            <label for="category_description">Category Description:</label><br>
+            <textarea id="category_description" name="category_description" rows="4" required></textarea><br>
+
+            <button type="submit">Add Category</button>
+        </form>
+    </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.querySelector("form");
+
+        form.addEventListener("submit", function (event) {
+            var errorMessages = [];
+
+            // Trim extra spaces from text inputs
+            var categoryNameInput = document.getElementById("category_name");
+            var trimmedCategoryName = categoryNameInput.value.trim();
+            if (categoryNameInput.value !== trimmedCategoryName) {
+                categoryNameInput.value = trimmedCategoryName;
+                errorMessages.push("Category Name cannot start or end with spaces. Leading and trailing spaces have been removed.");
+            }
+
+            var categorySlugInput = document.getElementById("category_slug");
+            var trimmedCategorySlug = categorySlugInput.value.trim();
+            if (categorySlugInput.value !== trimmedCategorySlug) {
+                categorySlugInput.value = trimmedCategorySlug;
+                errorMessages.push("Category Slug cannot start or end with spaces. Leading and trailing spaces have been removed.");
+            }
+
+            var categoryDescriptionInput = document.getElementById("category_description");
+            var trimmedCategoryDescription = categoryDescriptionInput.value.trim();
+            if (categoryDescriptionInput.value !== trimmedCategoryDescription) {
+                categoryDescriptionInput.value = trimmedCategoryDescription;
+                errorMessages.push("Category Description cannot start or end with spaces. Leading and trailing spaces have been removed.");
+            }
+
+            // Display all error messages
+            if (errorMessages.length > 0) {
+                alert(errorMessages.join("\n"));
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

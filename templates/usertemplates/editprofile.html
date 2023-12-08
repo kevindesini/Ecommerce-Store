@@ -1,0 +1,330 @@
+{% extends "./base.html" %}
+
+
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Edit Profile</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        /* Your existing styles... */
+
+        /* Add/Edit styles for the Edit Profile page */
+
+        /* Style the form */
+        .edit-profile-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Style form labels */
+        .edit-profile-form label {
+            font-weight: bold;
+        }
+
+        /* Style form input fields */
+        .edit-profile-form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Style form buttons */
+        .edit-profile-form .button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #000000;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-profile-form .button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Your existing HTML structure... -->
+
+    <section style="background-color: #ffffff;">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form class="edit-profile-form" method="post" action="{% url 'saveprofile'%}">
+                                {% csrf_token %}
+                                <label for="id_first_name">First Name</label>
+                                <input type="text" name="first_name" id="id_first_name" value="{{usr.first_name}}" required>
+
+                                <label for="id_last_name">Last Name</label>
+                                <input type="text" name="last_name" id="id_last_name" value="{{usr.last_name}}" required>
+
+                                <label for="id_username">Username</label>
+                                <input type="text" name="username" id="id_username" value="{{usr.username}}" required>
+
+                                <label for="id_email">Email</label>
+                                <input type="email" name="email" id="id_email" value="{{usr.email}}" required>
+
+                                <label for="id_mobile">Mobile</label>
+                                <input type="tel" name="mobile" id="id_mobile" value="{{usr.mobile}}" required>
+
+                                 {% comment %} <label for="id_password">Password</label>
+                                <input type="password" name="password" id="id_password" value="{{usr.password}}" required> 
+
+                                 <label for="id_profilepic">Update Profile pic :</label>
+                                <input type="file" action="{% url 'profilepic' %}" id="id_profilepic" name="id_profilepic" accept="image/*" required><br>
+                                <img id="image-preview" src="#" alt=""> {% endcomment %}
+                                
+                                <input name="user_id" type="hidden" value="{{ usr.id }}">
+        
+
+                                <button type="submit" class="button">Save Changes</button>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+    </section>
+
+    <!-- Your existing script tag... -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('.edit-profile-form');
+
+        form.addEventListener('submit', function (event) {
+            var firstName = document.getElementById('id_first_name').value.trim();
+            var lastName = document.getElementById('id_last_name').value.trim();
+            var username = document.getElementById('id_username').value.trim();
+            var email = document.getElementById('id_email').value.trim();
+            var mobile = document.getElementById('id_mobile').value.trim();
+
+            // Add more validation as needed
+
+            if (firstName === '' || lastName === '' || username === '' || email === '' || mobile === '') {
+                alert('All fields are required');
+                event.preventDefault();
+            }
+
+            // Validate email format
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                event.preventDefault();
+            }
+
+            // Validate mobile format
+            var mobileRegex = /^[0-9]{10}$/;
+            if (!mobileRegex.test(mobile)) {
+                alert('Please enter a valid 10-digit mobile number');
+                event.preventDefault();
+            }
+
+            // Check for leading spaces
+            if (firstName !== document.getElementById('id_first_name').value || 
+                lastName !== document.getElementById('id_last_name').value ||
+                username !== document.getElementById('id_username').value ||
+                email !== document.getElementById('id_email').value ||
+                mobile !== document.getElementById('id_mobile').value) {
+                alert('Please avoid leading spaces in the input fields');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
+{%endblock%}
+
+
+{% comment %} {% block content  %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="#">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .edit-product-container {
+            background-color: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .save-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add styling to the discard-button class */
+.discard-button {
+    display: inline-block;
+    padding: 10px 20px; /* Adjust the padding as needed */
+    background-color: #ff0000; /* Choose your desired button color */
+    color: #fff; /* Text color */
+    text-decoration: none; /* Remove underlines from the link text */
+    border: none; /* Remove borders */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer;
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+/* Add hover effect (optional) */
+.discard-button:hover {
+    background-color: #cc0000; /* Change color on hover */
+}
+/* styles.css */
+.smaller-image {
+    max-width: 200px; /* Adjust the max-width as needed */
+    height: auto;
+}
+
+
+    </style>
+<!-- Inside the <head> section of your HTML file -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+</head>
+<body>
+    <div class="edit-product-container">
+        <h2>Edit Account Info</h2>
+        <form method="post" action="/editprofile" enctype="multipart/form-data">
+            {% csrf_token %}
+        
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" value="{{ usr.first_name }}" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" value="{{ usr.last_name }}" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="user_name">Username:</label>
+                <input type="text" id="user_name" name="user_name" value="{{ usr.user_name }}" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" value="{{ usr.email }}" required>
+            </div>
+            
+            <input name="user_id" type="hidden" value="{{ usr.id }}">
+            
+            <br>
+            <br>
+        
+        
+        
+            <div class="form-group">
+                <button type="submit" class="save-button">Save Changes</button>
+                <a href="" class="discard-button">Discard</a>
+                
+            </div>
+        </form>
+
+        {% comment %} profilepicupload {% endcomment %}
+
+        {% comment %} <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+        <label for="product_image">Upload new profilepic:</label>
+            <input type="file" id="product_image" name="product_image" accept="image/*" required><br>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+
+        
+    </div>
+</body>
+</html>
+{%endblock%}  {% endcomment %} 

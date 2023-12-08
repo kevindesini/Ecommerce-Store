@@ -1,0 +1,296 @@
+{%  extends "./base.html" %}
+{% load static %}
+{% block content %}
+
+
+ <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="/"><i class="fa fa-home"></i> Home</a>
+                        <a href="#">{{products.category}} </a>
+                        <span>{{products.product_name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+{%for message in messages%}
+{{message}}
+{%endfor%}
+    <!-- Product Details Section Begin -->
+    <section class="product-details spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__left product__thumb nice-scroll">
+                            <a class="pt active" href="#product-4">
+                                <img src="{{ product.images.url }}" alt="">
+                            </a>
+                            <a class="pt" href="#product-2">
+                                <img src="{{ product.images.url }}" alt="">
+                            </a>
+                            <a class="pt" href="#product-3">
+                                <img src="{{ product.images.url }}" alt="">
+                            </a>
+                            <a class="pt" href="#product-4">
+                                <img src="{{ product.images.url }}" alt="">
+                            </a>
+                        </div>
+                        <div>
+
+                            <div class="product__details__pic-slider">
+                                      <div><img src="{{ product.images.url }}" alt="Slide 1"></div>
+                                      <div><img src="{{ product.images.url }}" alt="Slide 2"></div>
+                                      <div><img src="{{ product.images.url }}" alt="Slide 3"></div>
+                                       <!-- Add more divs as needed for additional slides -->
+                            </div>
+
+                        </div>
+                         
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="product__details__text">
+                        <h3>{{product.product_name}}<span>Brand: ShoeBuddy</span></h3>
+                        
+                        <div class="product__details__price"><span>{{product.price}}</span></div>
+                        {% comment %} <p>{{products.description}}</p> {% endcomment %}
+                        <div class="product__details__button">
+                            {% comment %} <div class="quantity">
+                                <span>Quantity:</span>
+                                <div class="pro-qty">
+                                    <input type="text" value="1">
+                                </div>
+                            </div> {% endcomment %}
+                            <form action="{%url 'add_cart' product.id%}" method="post">
+                        {% csrf_token %} 
+
+                       
+                        
+                        <div class="product__details__widget">
+                            
+                            <ul>
+                                <li>
+                                    <span>Available color:</span>
+                                    <div class="item-option-select" >
+                                        {% comment %} <select name="color_id" id="colorid" class="form-control" onchange='loadSize()'  required> {% endcomment %}
+                                    <select name="color_id" id="color_id" class="form-control"   required>
+                                        <option value="" disabled selected>Select</option>
+                                        {% for i in color %}
+                                        <option value="{{ i.id}}">{{ i.color | capfirst }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% comment %} <select name="size_id" id="size_id" class="form-control">
+                                        <option value="" disabled selected>Select color First</option>
+                                        
+                                    </select> {% endcomment %}
+                                    </div>
+                                </li>
+                                <li>
+                                    <span>Available size:</span>
+                                    <div class="item-option-select" id ='div2'>
+                                        <select name="size_id" class="form-control" onchange='loadAvailability()'>
+                                        <option value="" disabled selected>Select color First</option>
+                                        {% for s in size %}
+                                        <option value="{{ s.id }}">{{s.size}}</option>
+                                        {%endfor%}
+                                        </select>
+                                    </div>
+                                    <div id="avalibality"></div>
+                                </li>
+                                 <div class="product__details__button">
+
+                            <button type="submit" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</button>
+                            <ul>
+                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+                            </ul>
+                        </div>
+                                <li>
+                                    <span>Promotions:</span>
+                                    <p>Free shipping</p>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </form>
+                           
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="product__details__tab">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Description</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Specification</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Reviews ( 2 )</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                                <h6>Description</h6>
+                               <p>{{products.description}}</p>
+                            </div>
+                            <div class="tab-pane" id="tabs-2" role="tabpanel">
+                                <h6>Specification</h6>
+                                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+                                    quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+                                    Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+                                    voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+                                    consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+                                consequat massa quis enim.</p>
+                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+                                    dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+                                    nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+                                quis, sem.</p>
+                            </div>
+                            <div class="tab-pane" id="tabs-3" role="tabpanel">
+                                <h6>Reviews ( 2 )</h6>
+                                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+                                    quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+                                    Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+                                    voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+                                    consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+                                consequat massa quis enim.</p>
+                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+                                    dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+                                    nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+                                quis, sem.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="related__title">
+                        <h5>RELATED PRODUCTS</h5>
+                    </div>
+                </div>
+                {% for product in products1 %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product__item">                         
+                        <div class="product__item__pic set-bg">
+                            <a href="{%url 'product_details' product_id=product.id%}" class="product__item__pic set-bg">
+                            <img src="{{ product.images.url }}" alt="Image Description">
+                        </a>
+                            <ul class="product__hover">
+                                <li><a href="{{ product.images.url }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                {% comment %} <li><a href="#"><span class="icon_bag_alt"></span></a></li> {% endcomment %}
+                            </ul>
+                        </div>
+                        <div class="product__item__text">
+                        <h6><a href="{%url 'product_details' product_id=product.id%}">{{ product.product_name }}</a></h6>
+                        <div class="product__details__price">$ {{ product.price }} </span></div>
+                    
+                    </div>
+                    </div>
+                </div>
+                {% endfor %}  
+                
+            </div>
+        </div>
+    </section>
+    <!-- Product Details Section End -->
+
+    <!-- Instagram Begin -->
+    <div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/insta1.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/insta2.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/insta3.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/insta4.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/insta5.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="{% static "img/instagram/producthome1.jpg" %}">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ shoebuddy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Instagram End -->
+
+   
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+    <!-- Js Plugins -->
+    
+    <script>
+    $(document).ready(function(){
+        $('.product__details__pic-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000, // Set the speed of the autoplay
+            dots: true, // Show navigation dots
+            // Add other settings as needed
+        });
+    });
+</script>
+
+   
+</body>
+
+</html>
+{% endblock %}
