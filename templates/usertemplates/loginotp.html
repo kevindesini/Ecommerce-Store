@@ -55,9 +55,9 @@
 <button id="resendButton" onclick="resendOTP()" disabled>Resend OTP</button>   
  
 </div>
-<div class="d-grid gap-2 mt-4">
+{% comment %} <div class="d-grid gap-2 mt-4">
     <button class="btn btn-dark" type="submit">Login</button>
-</div>
+</div> {% endcomment %}
 
 </form>
  <script>
@@ -66,7 +66,7 @@
 
     // Function to start the timer and update the display
     function updateTimer() {
-        console.log("otpExpirationTime:",20);
+       
         let seconds = otpExpirationTime;
         otpTimer = setInterval(function () {
             document.getElementById('timer').innerHTML = `${seconds}s`;
@@ -92,16 +92,16 @@
         fetch('/resend_loginotp/', { method: 'GET' })
             .then(response => {
                 if (response.ok) {
-                    console.log("Resending OTP...")
+                    console.log("Resending OTP...");
                     // You might want to update the timer and UI after successfully resending OTP
-                    otpExpirationTime = {{ otp_expiry }}
-                    updateTimer()
-                    enableResendButton(false)
+                    otpExpirationTime = {{ otp_expiry }};
+                    updateTimer();
+                    enableResendButton(false);
                 } else {
-                    console.error("Failed to resend OTP")
+                    console.error("Failed to resend OTP");
                 }
             })
-            .catch(error =>{ console.error("Error:", error)})
+            .catch(error =>{ console.error("Error:", error)});
     }
 
     // Start the timer on page load

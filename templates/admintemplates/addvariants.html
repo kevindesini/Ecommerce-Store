@@ -67,22 +67,59 @@
 <body>
     <div>
         <h1>Add New Variants </h1>
-        {% comment %} {% url 'addvariants' product_id=product.id %} {% endcomment %}
-        <form method="post" action="{% url 'addvariants' product_id=product.id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label>Product Color:</label><br>
-            <input type="text" name="color"  required ><br><br>
+       
+                 
+           
             
-            <label>Product Size </label>
-            <input type="text" name="size"  required ><br><br>
-            
-            <label>Product stock</label>
-            <input name="stock" type="number"  required ><br><br>
+    <form method="post" action="{% url 'addvariants' product_id=product.id %}" enctype="multipart/form-data" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <label>Product Color:</label><br>
+    <input type="text" name="color" id="color" required><br><br>
 
-            <label>Product price</label>
-            <input name="price" type="number"  required ><br><br>
+    <label>Product Size:</label><br>
+    <input type="text" name="size" id="size" required><br><br>
 
-            {% comment %} <label for="product_category">Product Category:</label>
+    <label>Product Stock:</label><br>
+    <input name="stock" type="number" id="stock" required><br><br>
+
+    <label>Product Price:</label><br>
+    <input name="price" type="number" id="price" required><br><br>
+
+    <button type="submit">Add Product</button>
+</form>
+
+<script>
+    function validateForm() {
+        // Get form input values
+        var color = document.getElementById('color').value.trim();
+        var size = document.getElementById('size').value.trim();
+        var stock = document.getElementById('stock').value;
+        var price = document.getElementById('price').value;
+
+        // Validate color and size
+        if (color === '' || size === '') {
+            alert('Color and size cannot be empty.');
+            return false;
+        }
+
+        if (/^\s/.test(color) || /^\s/.test(size)) {
+            alert('Color and size cannot start with extra spaces.');
+            return false;
+        }
+
+        // Validate stock, price, and size not being negative
+        if (isNaN(stock) || isNaN(price) || isNaN(size) || stock < 0 || price < 0 || size < 0) {
+            alert('Stock, price, and size must be valid non-negative numbers.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>
+ {% comment %} <label for="product_category">Product Category:</label>
             {% comment %} <input type="text" id="product_category" name="product_category" required><br> {% endcomment %}
 
              
@@ -94,84 +131,8 @@
                             </select>         {% endcomment %}
 
         
-             <label for="product_image">Product Image:</label>
+             {% comment %} <label for="product_image">Product Image:</label>
             <input type="file" id="product_image" name="product_image" accept="image/*" required><br><br>
         
-            <img id="image-preview" src="#" alt="Image Preview">
+            <img id="image-preview" src="#" alt="Image Preview"> {% endcomment %}
          
-            <button type="submit">Add Product</button>
-        </form>
-    </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Select the form element
-        const form = document.querySelector('form');
-
-        // Add event listener to the form submission
-        form.addEventListener('submit', function (event) {
-            // Validate stock, size, and price
-            const stockInput = form.querySelector('input[name="stock"]');
-            const sizeInput = form.querySelector('input[name="size"]');
-            const priceInput = form.querySelector('input[name="price"]');
-            
-            if (parseInt(stockInput.value) < 0) {
-                alert('Stock cannot be a negative number');
-                event.preventDefault();
-            }
-
-            if (parseInt(priceInput.value) < 0) {
-                alert('Price cannot be a negative number');
-                event.preventDefault();
-            }
-
-            // Validate image file type
-            const imageInput = form.querySelector('input[name="product_image"]');
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-
-            if (!allowedImageTypes.includes(imageInput.files[0].type)) {
-                alert('Please upload a valid image file (JPEG, PNG, or GIF)');
-                event.preventDefault();
-            }
-
-            // Trim and validate color and size
-            const colorInput = form.querySelector('input[name="color"]');
-            const trimmedColor = colorInput.value.trim();
-            colorInput.value = trimmedColor;
-
-            const trimmedSize = sizeInput.value.trim();
-            sizeInput.value = trimmedSize;
-
-            if (trimmedColor === '' || trimmedSize === '') {
-                alert('Color and size cannot be empty');
-                event.preventDefault();
-            }
-
-            if (/^\d+$/.test(trimmedColor)) {
-                alert('Color cannot be a number');
-                event.preventDefault();
-            }
-
-            // Additional validation logic for color and size can be added here
-        });
-
-        // Add event listener for image preview
-        const imageInput = form.querySelector('input[name="product_image"]');
-        const imagePreview = document.getElementById('image-preview');
-
-        imageInput.addEventListener('change', function () {
-            const file = this.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-            }
-        });
-    });
-</script>
-</body>
-</html>

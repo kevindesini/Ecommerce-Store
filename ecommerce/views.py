@@ -16,6 +16,7 @@ from datetime import date
 import datetime
 
 
+
 def home(request):
     category = request.GET.get('category')
     if category:
@@ -276,7 +277,7 @@ def productdetails(request, product_id):
 
 def profile(request):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return render(request, 'usertemplates/login.html')
     
     currentuser = request.user
     usr = Account.objects.get(email=currentuser)
@@ -374,9 +375,11 @@ def submitaddress(request):
             city=city,
             pincode=pincode
         )
-        print("\n\n\n", request.session["redirect"])
+        # print("\n\n\n", request.session["redirect"])
         address.save()
         messages.success(request, 'Address successfully added')
+        return redirect('checkout')
+
     # return redirect('address')
     return HttpResponseRedirect(request.session["redirect"])
 
@@ -445,7 +448,7 @@ def change_password(request):
         current_password = request.POST['current_password']
         new_password = request.POST['new_password']
         confirm_password = request.POST['confirm_new_password']
-        user = Userprofile.objects.get(email=request.user)
+        user = Userprofile.objects.filter(email=request.user)
         user1 = Account.objects.get(email=request.user)
         if new_password == confirm_password and user1.check_password(current_password):
             # user.check_password(current_password)
@@ -466,6 +469,11 @@ def change_password(request):
     return render(request, 'usertemplates/changepassword.html')
 
 
+def coupondetails(request):
+    coupons = Coupon.objects.all()
+    context = {'coupons': coupons
+               }
+    return render(request, 'usertemplates/coupondisplay.html', context)
 
 
 
@@ -473,7 +481,9 @@ def change_password(request):
 def place_order(request, total=0, quantity=0,):
 
     current_user = request.user
-    address = Userprofile.objects.get(currentuser=request.user,is_default=True)
+    print(current_user)
+    address = Userprofile.objects.get(
+        currentuser=request.user, is_default=True)
 
     user_profile = Userprofile.objects.get(currentuser=current_user, is_default=True)
     print('\n\n', user_profile)
@@ -572,7 +582,7 @@ def place_order(request, total=0, quantity=0,):
 def cashondelivery(request, order_id):
     
    
-    # discount_price = request.GET.get('discount_price')
+    discount_price = request.GET.get('discount_price')
     current_user = request.user
     order = Order.objects.get(id=order_id)
     order.is_ordered = True
@@ -589,14 +599,15 @@ def cashondelivery(request, order_id):
        
         item.ordered = True
         item.save()
-    # if discount_price:
-    #     # total=order.order_total-discount_price
-    #     # discount_price = float(discount_price)
-    #     # order.discount_Price = discount_price
-    #     # total = order.order_total - discount_price
-    #     order.discount_amount = total
-    #     order.save()
-    # else:
+    if discount_price:
+        # total=order.order_total-discount_price
+        discount_price = float(discount_price)
+        order.discount_price = discount_price
+        total = order.order_total - discount_price
+        order.discount_amount = total
+        order.save()
+    else:
+        order.discount_amount=order.order_total        
         order.final_price = order.order_total
         order.save()
     cart = CartItem.objects.filter(currentuser=current_user)
@@ -608,6 +619,108 @@ def cashondelivery(request, order_id):
     
     return render(request,'usertemplates/myorders.html',context)
 
+
+def coupon_check(request):
+    coupon=None
+    if request.method == 'POST':
+        current_user = request.user
+        coupon_code = request.POST.get('coupon')
+        order_id = request.POST.get('order_id')
+
+        try:
+            # Check if the coupon code exists in the Coupon model
+            coupon = Coupon.objects.get(coupon_code__iexact=coupon_code)
+        except Coupon.DoesNotExist:
+            messages.warning(request, 'Invalid Coupon Code')
+            return redirect('coupon_check')
+        
+        user = Account.objects.get(email=current_user)
+
+         # Check if the coupon is already applied to the current user
+        if AppliedCoupon.objects.filter(currentuser=user, coupon=coupon).exists():
+            messages.info(request, 'Coupon is already applied to this order.')
+            return redirect('coupon_check')
+        
+         # Check if the coupon is valid (not expired)
+        if coupon.check_expiry() == 'Expired':
+            messages.warning(request, 'Coupon has expired.')
+            return redirect('coupon_check')
+
+        total_amount =order.order_total  # Replace this with your own logic
+        if total_amount < coupon.minimum_purchase_amount:
+            messages.warning(request, 'Minimum purchase amount not reached.')
+            return redirect('coupon_check')
+
+        # If all checks pass, apply the coupon to the current user
+        applied = AppliedCoupon(currentuser=user, coupon=coupon)
+        applied.save()
+        
+        discount_price = coupon.discount_price
+
+        order = Order.objects.get(id=order_id)  # Replace with your actual Order model
+        cart_items = CartItem.objects.filter(user=current_user)  # Replace with your actual CartItem model
+
+        grand_total = 0
+        total = 0
+
+        for cart_item in cart_items:
+            total += (cart_item.variations.price * cart_item.quantity)
+
+        grand_total = order.order_total - coupon.discount_price
+        context = {
+            
+            'discount_price': discount_price,
+            'order': order,
+            'cart_items': cart_items,
+            'total': total,
+            'grand_total': round(grand_total, 2),
+        }
+        return render(request, 'usertemplates/placeorder.html', context)
+    context = {
+        'coupon': coupon
+    }
+    return render(request, 'usertemplates/placeorder.html',context)
+        
+        
+            
+
+# def apply_coupon(request):
+#     if request.method == 'POST':
+#         current_user = request.user
+#         coupon_code = request.POST.get('coupon_code')
+
+#         try:
+#             # Check if the coupon code exists in the Coupon model
+#             coupon = Coupon.objects.get(coupon_code__iexact=coupon_code)
+#         except Coupon.DoesNotExist:
+#             messages.warning(request, 'Invalid Coupon Code')
+#             return redirect('your_redirect_view_name')
+
+#         # Check if the coupon is already applied to the current user
+#         if AppliedCoupon.objects.filter(currentuser=current_user, coupon=coupon).exists():
+#             messages.info(request, 'Coupon is already applied.')
+#             return redirect('your_redirect_view_name')
+
+#         # Check if the coupon is valid (not expired)
+#         if coupon.check_expiry() == 'Expired':
+#             messages.warning(request, 'Coupon has expired.')
+#             return redirect('your_redirect_view_name')
+
+#         # Check if the total amount is equal to or greater than the minimum purchase value
+#         # You should replace this with your own logic for calculating the total amount
+#         total_amount = calculate_total_amount()
+#         if total_amount < coupon.minimum_purchase_amount:
+#             messages.warning(request, 'Minimum purchase amount not reached.')
+#             return redirect('your_redirect_view_name')
+
+#         # If all checks pass, apply the coupon to the current user
+#         applied_coupon = AppliedCoupon(currentuser=current_user, coupon=coupon)
+#         applied_coupon.save()
+
+#         messages.success(request, 'Coupon applied successfully.')
+#         return redirect('your_redirect_view_name')
+
+#     return render(request, 'your_coupon_form_template.html')
 
 def myorders(request):
     current_user = Account.objects.get(email=request.user)

@@ -48,20 +48,22 @@
 </div>
         {% endfor %}    
         
-
 <form action="/signup" method="post" onsubmit="return validateForm()">
     {% csrf_token %}
     <label class="text-black mt-3">FirstName</label>
     <div class="form-group">
         <input id='firstname' type="text" class="form-control" name="firstname" required>
+        <p id="firstnameError"></p>
     </div>
     <label class="text-black mt-2">LastName</label>
     <div class="form-group">
-        <input id= 'lastname' type="text" class="form-control" name="lastname" required>
+        <input id='lastname' type="text" class="form-control" name="lastname" required>
+        <p id="lastnameError"></p>
     </div>
     <label class="text-black mt-2">Username</label>
     <div class="form-group">
         <input id='username' type="text" class="form-control" name="username" required>
+        <p id="usernameError"></p>
     </div>
     <label class="text-black mt-2">Email</label>
     <div class="form-group">
@@ -70,17 +72,18 @@
     <label class="text-black mt-2">Password</label>
     <div class="form-group">
         <input id='pass1' type="password" class="form-control" name="pass1" required>
+        <p id="pass1Error"></p>
     </div>
-    <p id="pass1Error"></p>
     <label class="text-black mt-2">ConfirmPassword</label>
     <div class="form-group">
         <input id='pass2' type="password" class="form-control" name="pass2" required>
+        <p id="pass2Error"></p>
     </div>
-    <p id="pass2Error"></p>
     <div class="d-grid gap-2 mt-4">
         <button class="btn btn-dark" type="submit">Sign Up</button>
     </div>
 </form>
+
 <br>
 <p>Already User? <a href="/login">Login</a></p>
 
@@ -91,35 +94,60 @@
 <script>
     function validateForm() {
         
-        var firstname = document.getElementById('firstname').value.trim();
-        var lastname = document.getElementById('lastname').value.trim();
-        var username = document.getElementById('username').value.trim();
+        var firstname = document.getElementById('firstname').value;
+        var lastname = document.getElementById('lastname').value;
+        var username = document.getElementById('username').value;
         var pass1 = document.getElementById('pass1').value.trim();
         var pass2 = document.getElementById('pass2').value.trim();
-        
 
         // Reset error messages
         document.getElementById('pass1Error').innerText = "";
         document.getElementById('pass2Error').innerText = "";
+        document.getElementById('usernameError').innerText = "";
+        document.getElementById('firstnameError').innerText = "";
+        document.getElementById('lastnameError').innerText = "";
 
-        // Password validation rules
-        var passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{8,}$/;
-
-        // Validate first name, last name, and username (can be customized based on your requirements)
+        // Validate first name, last name, and username
         if (firstname === "" || lastname === "" || username === "") {
             alert("Please fill out all required fields.");
             return false;
         }
 
+        // Trim extra spaces in firstname, lastname, and username
+        document.getElementById('firstname').value = firstname.trim();
+        document.getElementById('lastname').value = lastname.trim();
+        document.getElementById('username').value = username.trim();
+
+        // Validate and trim extra spaces in firstname
+        if (firstname !== firstname.trim()) {
+            alert("First name should not have extra spaces at the beginning.");
+            return false;
+        }
+
+        // Validate and trim extra spaces in lastname
+        if (lastname !== lastname.trim()) {
+            alert("Last name should not have extra spaces at the beginning.");
+            return false;
+        }
+
+        // Validate and trim extra spaces in username
+        if (username !== username.trim()) {
+            alert("Username should not have extra spaces at the beginning.");
+            return false;
+        }
+
+        // Password validation rules
+        var passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{8,}$/;
+
         // Validate password
         if (!passwordRegex.test(pass1)) {
-            document.getElementById('pass1Error').innerText = "Password must be at least 8 characters long and contain at least one letter and one digit.";
+            alert("Password must be at least 8 characters long and contain at least one letter and one digit.");
             return false;
         }
 
         // Confirm password
         if (pass1 !== pass2) {
-            document.getElementById('pass2Error').innerText = "Passwords do not match.";
+            alert("Passwords do not match.");
             return false;
         }
 
@@ -144,6 +172,8 @@
         return true;
     }
 </script>
+
+
 
 
 </body>

@@ -79,6 +79,14 @@
                 <span class="hide-menu">Order Management</span>
               </a>
             </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link" href="/couponmanagement" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-description"></i>
+                </span>
+                <span class="hide-menu">Coupon Management</span>
+              </a>
+            </li>
             {% comment %} <li class="sidebar-item">
               <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
                 <span>
@@ -457,13 +465,13 @@
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>
+                                    {% comment %} <th>
                                         <span class="custom-checkbox">
                                             <input type="checkbox" id="selectAll">
                                             <label for="selectAll"></label>
                                         </span>
-                                    </th>
-
+                                    </th> {% endcomment %}
+                                    <th>Order No</th>
                                     <th>Name</th>
                                     <th>Full Address</th>
                                     <th>Mobile</th>
@@ -477,12 +485,12 @@
                                 
                                 {% for order in orders %}   
                                 <tr>
-                                    <td>
+                                    {% comment %} <td>
                                         <span class="custom-checkbox">
                                             <input type="checkbox" id="checkbox1" name="options[]" value="1">
                                             <label for="checkbox1"></label>
                                         </span>
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td>{{order.order_number}}</td>
                                     <td>{{order.user_profile.firstname}}{{order.user_profile.lastname}}</td>
                                     <td>{{order.user_profile.homeaddress}}</td>

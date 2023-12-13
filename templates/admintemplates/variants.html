@@ -350,6 +350,14 @@
                 <span class="hide-menu">Order Management</span>
               </a>
             </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link" href="/couponmanagement" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-description"></i>
+                </span>
+                <span class="hide-menu">Coupon Management</span>
+              </a>
+            </li>
             {% comment %} <li class="sidebar-item">
               <a class="sidebar-link" href="#" aria-expanded="false">
                 <span>
@@ -497,7 +505,7 @@
                         <th>Size</th>
                         <th>Stock</th>
                         <th>Prize</th>
-                        <th>Image</th>                        
+                        {% comment %} <th>Image</th>                         {% endcomment %}
                         <th>Operations</th>                        
                     </tr>
                 </thead>
@@ -517,7 +525,7 @@
                                     <td>{{size.stock}}</td>
                                     <td>{{size.price}}</td>
                                     {% comment %} <td><img src="/media/{{size.images }}" width="200" height="200"></td> {% endcomment %}
-                                    <td>
+                                    {% comment %} <td>
                                               {% for image_stock in size.imagestock_set.all %}
                                               {% if image_stock.image %}
                                               <img src="{{ image_stock.image.url }}" width="200" height="200">
@@ -525,7 +533,7 @@
                                               <img src="" width="200" height="200">
                                               {% endif %}
                                               {% endfor %}
-                                          </td>
+                                          </td> {% endcomment %}
                                       <td >
                                         <a href="{%url 'editvariants' size_id=size.id product_id=product.id %}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>Edit</a>
                                         <a href="{%url 'deletevariants' product_id=product.id  size_id=size.id %}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>

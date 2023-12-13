@@ -1,34 +1,33 @@
+
+
 {% extends './base.html' %}
 {% load static %}
 
 {% block content %}
-<style>
-.col-lg-8 {
-    -ms-flex: 0 0 66.666667%;
-    flex: 0 0 66.666667%;
-    max-width: 66.666667%;
-    margin-top: 20px;
-  }
-</style>
-{% comment %} {%include '../messages.html'%} {% endcomment %}
+
+
 <section class="section-content padding-y bg">
+	{% for message in messages %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
 	<div class="container">
 
 		<!-- ============================ COMPONENT 1 ================================= -->
 		<h4 class="text-center mb-20">Review Your Order and Make Payment</h4>
+		
 		<div class="row">
-
-			<aside class="col-md-12 col-lg-3">
-				<div class="card" style="margin-bottom: px;height: 250px;">
+			
+			<aside class="col-md-12 col-lg-8">
+				<div class="card">
 					<h5 class="card-header">Billing Address</h5>
 					<div class="card-body">
 						<p class="card-text mb-0">{{address.firstname}} {{address.lastname}}</p>
-						<p class="card-text mb-0">{{address.email}}</p>
+						<p class="card-text mb-0">{{address.email}},{{address.mobile}}</p>
+						<p class="card-text mb-0">{{order.city}}, {{order.state}},{{order.country}}</p>
 						
-						<p class="card-text mb-0">{{order.city}}, {{order.state}}</p>
-						<p class="card-text mb-0">{{order.country}}</p>
-						<p class="card-text mb-0">{{address.mobile}}</p>
-						<br>
 						{% if order.order_note %}
 						<b>Order Note: </b> {{order.order_note}}
 						{% endif %}
@@ -36,7 +35,7 @@
 
 					</div>
 				</div>
-				<div class="card" style="margin-top:10px;">
+				{% comment %} <div class="card">
 					<h5 class="card-header">Payment Method</h5>
 					<div class="card-body">
 						<p class="card-text">Cash on Delivery</p>
@@ -44,18 +43,9 @@
 						<p class="card-text">PayPal</p>
 
 					</div>
-				</div>
+				</div> {% endcomment %}
 				<div class="card">
-					
-				</div>
-
-			</aside> <!-- col.// -->
-			<aside class="col-md-12 col-lg-8">
-
-				<div class="card">
-					
-						<br>
-						<h5 class="card-header">Review Products</h5>
+					<h5 class="card-header">Review Products</h5>
 					<div class="card-body">
 						<table class="table table-borderless table-shopping-cart">
 							<thead class="text-muted">
@@ -119,7 +109,15 @@
 
 							</tbody>
 						</table>
-						<div class="card-body">
+
+					</div>
+				</div>
+
+			</aside> <!-- col.// -->
+			<aside class="col-md-12 col-lg-4">
+
+				<div class="card">
+					<div class="card-body">
 						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
 							<dt>Total price:</dt>
 							<dd class="text-right">$ {{total}}</dd>
@@ -127,23 +125,22 @@
 						{% comment %} <dl class="dlist-align" style="display: flex;justify-content: space-between;">
 							<dt>Tax:</dt>
 							<dd class="text-right"> $ {{tax}}</dd>
-						</dl>
+						</dl> {% endcomment %}
 						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
 							<dt>Coupon Amount:</dt>
 							<dd class="text-right text-success" id="coupon-amount">$ {{ discount_price }}</dd>
-						</dl> {% endcomment %}
+						</dl>
 						<dl class="dlist-align" style="display: flex;justify-content: space-between;">
 							<dt>Grand Total:</dt>
 							<dd class="text-right text-dark b" id="grand-total"><strong>$ {{grand_total}}</strong></dd>
 						</dl>
 						<hr>
 						<div class="d-grid gap-2">
-							<a href="{% url 'cashondelivery' order.id %}" onclick="return confirm('Are you sure you want this items by Cash On Delivery?')" class="btn btn-primary"> Cash on Delivery</a>
+							<a href="{% url 'cashondelivery' order.id%}" onclick="return confirm('Are you sure you want this items by Cash On Delivery?')" class="btn btn-primary"> Cash on Delivery</a>
 						</div>
-
-					</div>
-{% comment %} 						
-						<form method="POST" action="{% url 'wallet_payment' order.id %}">
+						<br>
+						
+						{% comment %} <form method="POST" action="#">
 							{% csrf_token %}
 							<input type="hidden" name="grand_total" value="{{ grand_total }}">
 							<input type="hidden" name="discount_price" value="{{ discount_price }}"> 
@@ -152,23 +149,23 @@
 							<button type="submit" class="btn btn-warning col-12">
 								<i><strong class="text-lg">Wallet Payment</strong></i>
 							</button>
-						</form>
+						</form> {% endcomment %}
 						<br>
 						<div id="paypal-button-container">
 							<!-- PayPal Button Will Load -->
-						</div> {% endcomment %}
+						</div>
 
 					</div> <!-- card-body.// -->
 				</div> <!-- card.// -->
-				{% comment %} <div class="discount__content">
+				<div class="discount__content">
 					<h6>Discount codes</h6>
 					<form method = 'POST' action="{%url 'coupon_check'%}">
 						{% csrf_token %}
 						<input name='order_id' type="hidden" value={{order.id}}>
-						<input type="text" name='coupon_obj' placeholder="Enter your coupon code">
+						<input type="text" name='coupon' placeholder="Enter your coupon code">
 						<button type="submit" class="site-btn">Apply</button>
 					</form>
-				</div> {% endcomment %}
+				</div>
 			</aside> <!-- col.// -->
 
 
@@ -195,6 +192,95 @@
     {% endfor %}
 </script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AZGNeFxiJyXrL9XpinF2gPLxaH9xRb0rypH-V7pNJnV77UjOWsOqQewOGPM8BvXEFhBAp7oG1jeT5f4U&currency=USD"></script>
+<script>
+
+	function getCookie(name) {
+		
+		
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+	var amount = "{{ grand_total }}"
+	var url = "#"
+	var csrftoken = getCookie('csrftoken');
+	var orderID = "{{order.id}}"
+	var payment_method = 'PayPal'
+	var redirect_url = "#"
+	var discount_price = "{{ discount_price }}"
+	console.log('window open')
+	console.log('grand_total=' +amount)
+	console.log('orderID = ' +orderID)
+	console.log('discount_price = ' +discount_price)
+	// Render the PayPal button into #paypal-button-container
+	paypal.Buttons({
+
+		style: {
+			color: 'blue',
+			shape: 'rect',
+			label: 'pay',
+			height: 40
+		},
+
+		// Set up the transaction
+		createOrder: function(data, actions) {
+			return actions.order.create({
+				purchase_units: [{
+					amount: {
+						value: amount,
+					}
+				}]
+			});
+
+		},
+
+		// Finalize the transaction
+		onApprove: function(data, actions) {
+			return actions.order.capture().then(function(details) {
+				// Show a success message to the buyer
+				console.log(details);
+				sendData();
+				function sendData(){
+					fetch(url, {
+						method : "POST",
+						headers: {
+							"Content-type": "application/json",
+							"X-CSRFToken": csrftoken,
+						},
+						body: JSON.stringify({
+							orderID: orderID,
+							transID: details.id,
+							payment_method: payment_method,
+							status: details.status,
+							payedAmount:amount,
+							discountprice:discount_price,
+						}),
+					})
+				  .then((response) => response.json())
+				  .then((data) => {
+						window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID;
+
+					});
+				}
+			});
+		}
+
+
+	}).render('#paypal-button-container');
+</script>
 
 
 

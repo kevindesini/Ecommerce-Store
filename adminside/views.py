@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 import random
 from adminside.models import *
 from cart.models import *
-
+from adminside.decorators import superuser_required
 # Create your views here.
 
 
@@ -84,6 +84,7 @@ def adminsignout(request):
         messages.success(request, " Admin is Logged Out Successfully")
         return render(request,'admintemplates/adminsignin.html')
 
+@superuser_required
 def admindashboard(request):
 
     success_messages = messages.get_messages(request)
@@ -95,7 +96,7 @@ def admindashboard(request):
 
     return render(request, 'admintemplates/index.html',context)
 
-
+@superuser_required
 def usermanagement(request):
     users = Account.objects.all().exclude(is_superuser=True)
     paginator = Paginator(users, 10)
@@ -111,7 +112,7 @@ def usermanagement(request):
 
     return render(request, 'admintemplates/usermanagement.html',context)
 
-
+@superuser_required
 def blockuser(request,user_id):    
     # id = request.GET.get('user_id')    
     try:
@@ -129,7 +130,7 @@ def blockuser(request,user_id):
     return redirect('usermanagement')
 
 
-
+@superuser_required
 def unblockuser(request,user_id):
     # id = request.GET.get('usr_id')
     try:
@@ -143,7 +144,7 @@ def unblockuser(request,user_id):
     messages.success(request, 'User is Unblocked')
     return redirect('usermanagement')
 
-
+@superuser_required
 def categorymanagement(request):
     categories = Category.objects.all().order_by('-id')
     paginator = Paginator(categories, 10)
@@ -158,6 +159,7 @@ def categorymanagement(request):
     return render(request, 'admintemplates/categorymanagement.html',context)
 
 
+@superuser_required
 def addcategory(request):
     if request.method == "POST":
         category_name = request.POST.get('category_name')
@@ -178,6 +180,7 @@ def addcategory(request):
     return render(request, 'admintemplates/addcategory.html')
 
 
+@superuser_required
 def deactivatecategory(request, category_id):
     category = Category.objects.get(id=category_id)
     category.is_available = False
@@ -358,8 +361,6 @@ def deactivateproduct(request, product_id):
 def variants(request, product_id):
     product = Product.objects.get(id=product_id)
     sizes = SizeVariant.objects.filter(product_id=product, is_available=True)
-    for i in sizes:
-        print(i,'\n\n')
     context = {
         'sizes': sizes,
         'product': product,
@@ -387,6 +388,8 @@ def addvariants(request, product_id):
             image = ImageStock.objects.create(product=Product.objects.get(id=product_id), color_variant=color_v, size_variant=size_v, image=product_image
                               )
             image.save()
+            messages.success(request, 'New variant added')
+
             return redirect('variants', product_id=product_id)
         else:
             color_v = ColorVariant(product_id=product, color=color)
@@ -423,16 +426,22 @@ def editvariants(request, size_id, product_id):
         size.size = new_size
         size.price = price        
         size.stock = stock
+        size.save()
 
 
         # -----
-        image = ImageStock.objects.get(product=Product.objects.get(id=product_id))
-        image.color_variant = new_color
-        image.image = product_image
-        image.save()
+        product=Product.objects.get(id=product_id)
+        color_variant = ColorVariant.objects.get_or_create(
+            color=new_color, product_id=product)
+        print('\n\n\nfcghjkljhgjh', color_variant)
+
+        image = ImageStock.objects.get_or_create(product=product,
+                                                 size_variant=size, color_variant=color_variant[0], image=product_image)
+        
+        
+        # image[0].save()
         # image = ImageStock.objects.create(product=Product.objects.get(id=product_id), color_variant=color_v, size_variant=size_v, image=product_image
         #             )
-        size.save()
         return redirect('variants', product_id)
     # color = ColorVariant.objects.get()
     size = SizeVariant.objects.get(id=size_id)
@@ -453,14 +462,14 @@ def editvariants(request, size_id, product_id):
 #         messages.error(request, "Variant not found")
 #         return redirect('variants')  # Redirect to an appropriate page
 
-
+@superuser_required
 def deletevariants(request,product_id,size_id):
     variant = SizeVariant.objects.get(id=size_id)
     variant.delete()
     messages.warning(request, "Varient deleted Successfully")
     return redirect('variants', product_id) 
 
-
+@superuser_required
 def ordermanagement(request):
       
     # address = Userprofile.objects.get(currentuser=request.user,is_default=True)
@@ -472,7 +481,7 @@ def ordermanagement(request):
     }
     return render(request, 'admintemplates/ordermanagement.html', context)
 
-
+@superuser_required
 def admin_change_order_status(request, order_id):
     order = Order.objects.get(id=order_id)
     status = request.POST.get(f'status-{order_id}')
@@ -483,7 +492,7 @@ def admin_change_order_status(request, order_id):
     }
     # render(request,'admintemplates/ordermanagement.html',context)
     return redirect('ordermanagement')
-
+@superuser_required
 def orderlist(request,order_id):
     order = Order.objects.get(id=order_id)
     order_items = OrderProduct.objects.filter(order=order)
@@ -491,3 +500,63 @@ def orderlist(request,order_id):
         "order_items": order_items
     }
     return render(request, 'admintemplates/orderlist.html',context )
+
+
+def couponmanagement(request):
+    coupons = Coupon.objects.all()
+    context = {
+        'coupons': coupons,
+    }
+    return render(request, 'admintemplates/couponmanagement.html',context)
+
+
+def addcoupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        if Coupon.objects.filter(coupon_code=coupon_code).exists():
+            error_message = 'Coupon name already exists. Please choose a different Coupon name.'
+            return render(request, 'couponmanagement.html', {'error_message': error_message})
+        else:
+            print   (request.POST)
+            coupon_code = request.POST.get('coupon_code')
+            expdate = request.POST.get('is_expired')
+            discount_price = request.POST.get('discount_prize')
+            minimum_purchase_amount = request.POST.get('minimum_amount')
+            coupon = Coupon(coupon_code=coupon_code,
+                            expiration_date=expdate,
+                            discount_price=discount_price,
+                            minimum_purchase_amount=minimum_purchase_amount,
+                            )
+            coupon.save()            
+            print("Error: Discount price cannot be null.")
+            return redirect('couponmanagement')
+    return render(request, 'admintemplates/addcoupon.html')
+
+
+def editcoupon(request, id):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        expiration_date = request.POST.get('expiration_date')
+        discount_price = request.POST.get('discount_price')
+        minimum_purchase_amount = request.POST.get('minimum_purchase_amount')
+        coupon = Coupon.objects.get(id=id)
+        print(expiration_date)
+        coupon.coupon_code = coupon_code
+        coupon.expiration_date = expiration_date
+        coupon.discount_price = discount_price
+        coupon.minimum_purchase_amount = minimum_purchase_amount
+        coupon.save()
+        return redirect('couponmanagement')
+    coupon = Coupon.objects.get(id=id)
+    context = {
+        'coupon':coupon
+    }
+    return render(request, 'admintemplates/editcoupon.html',context)
+
+
+def deletecoupon(request, id):
+    
+    coupon = Coupon.objects.filter(id=id)
+    coupon.delete()
+    messages.warning(request, "Coupon deleted Successfully")
+    return redirect('couponmanagement')

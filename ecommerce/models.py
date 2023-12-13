@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 from adminside.models import *
-
+from datetime import date
 # Create your models here.
 
 
@@ -157,3 +157,30 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.order.first_name
+
+
+class Coupon(models.Model):
+    coupon_code = models.CharField(max_length=20, unique=True)
+    expiration_date = models.DateField(blank=False)
+    discount_price = models.IntegerField(default=100)
+    minimum_purchase_amount = models.IntegerField(default=500)
+    
+
+    def expiry_date(self):
+        return str(self.expiration_date)
+
+    def check_expiry(self):
+        if self.expiration_date < date.today():
+            return str("Expired")
+        else:
+            return str("Valid")
+
+    def __str__(self):
+        return self.coupon_code
+
+class AppliedCoupon(models.Model):
+    currentuser = models.ForeignKey(Account, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.coupon.coupon_code}'

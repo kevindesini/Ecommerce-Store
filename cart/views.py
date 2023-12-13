@@ -376,7 +376,7 @@ def remove_cart_item(request, product_id, cart_item_id):
 
 def checkout(request, total=0, quantity=0, cart_items=None):
     variants = SizeVariant.objects.filter()
-    request.session["redirect"] = request.build_absolute_uri()
+    # request.session["redirect"] = request.build_absolute_uri()
     try:
         # tax = 0
         # grand_total = 0
@@ -384,8 +384,10 @@ def checkout(request, total=0, quantity=0, cart_items=None):
             cart_items = CartItem.objects.filter(
                 currentuser=request.user, is_active=True)
         else:
-            cart = Cart.objects.get(cart_id=_cart_id(request))
-            cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+            
+            # cart = Cart.objects.get(cart_id=_cart_id(request))
+            # cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+            return render(request, 'usertemplates/login.html')
 
         for cart_item in cart_items:
             total += (cart_item.variations.price * cart_item.quantity)

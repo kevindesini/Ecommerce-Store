@@ -25,12 +25,14 @@ urlpatterns = [
     path('variants/<product_id>/', views.variants, name='variants'),
     path('addvariants/<product_id>/', views.addvariants, name='addvariants'),
     path('editvariants/<size_id>/<product_id>/', views.editvariants, name='editvariants'),
-    path('deletevariants/<product_id>/<size_id>/',
-         views.deletevariants, name='deletevariants'),
+    path('deletevariants/<product_id>/<size_id>/',views.deletevariants, name='deletevariants'),
     path('ordermanagement', views.ordermanagement, name='ordermanagement'),
     path('admin_change_order_status/<order_id>/', views.admin_change_order_status, name='admin_change_order_status'),
-    path('orderlist/<order_id>/',
-         views.orderlist, name='orderlist'),
+    path('orderlist/<order_id>/',views.orderlist, name='orderlist'),
+    path('couponmanagement',views.couponmanagement, name='couponmanagement'),
+    path('addcoupon', views.addcoupon, name='addcoupon'),
+    path('editcoupon/<id>/', views.editcoupon, name='editcoupon'),
+    path('deletecoupon/<id>/', views.deletecoupon, name='deletecoupon'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

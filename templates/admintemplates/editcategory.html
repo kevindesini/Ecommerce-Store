@@ -100,7 +100,7 @@
         
     </div>
 
-   <script>
+  <script>
     document.addEventListener("DOMContentLoaded", function () {
         var form = document.querySelector("form");
 
@@ -129,6 +129,11 @@
                 errorMessages.push("Category Description cannot start or end with spaces. Leading and trailing spaces have been removed.");
             }
 
+            // Check if category name contains numbers
+            if (/\d/.test(trimmedCategoryName)) {
+                errorMessages.push("Category Name cannot contain numbers.");
+            }
+
             // Display all error messages
             if (errorMessages.length > 0) {
                 alert(errorMessages.join("\n"));
@@ -137,6 +142,7 @@
         });
     });
 </script>
+
 
 </body>
 </html>

@@ -69,34 +69,28 @@
      {% comment %} {% for i in sizes  %} {% endcomment %}
     <div class="edit-product-container">
         <h1>Edit Variant </h1>
-        <form method="post" action="{% url 'editvariants' size_id=size.id product_id=product_id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label>Product Color:</label><br>
-            <input value="{{size.Color_id.color}}" type="text" name="color"  required ><br><br>
-            
-            <label>Product Size </label>
-            <input value="{{size.size}}" type="text" name="size"  required ><br><br>
-            
-            <label>Product stock</label>
-            <input value="{{size.stock}}" name="stock" type="number"  required ><br><br>
+        <form name="editForm" method="post" action="{% url 'editvariants' size_id=size.id product_id=product_id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label>Product Color:</label><br>
+    <input value="{{size.Color_id.color}}" type="text" name="color" required><br><br>
+    
+    <label>Product Size</label><br>
+    <input value="{{size.size}}" type="text" name="size" required><br><br>
+    
+    <label>Product Stock</label><br>
+    <input value="{{size.stock}}" name="stock" type="number" required><br><br>
 
-            <label>Product price</label>
-            <input value="{{size.price}}" name="price" type="number"  required ><br><br>
+    <label>Product Price</label><br>
+    <input value="{{size.price}}" name="price" type="number" required><br><br>
 
-                   
-            <label for="product_image">Product Image:</label>
-            <input type="file" id="product_image" name="product_image" accept="image/*" required><br><br>
-        
-            <img id="image-preview" src="#" alt="Image Preview">
-         
-            <button type="submit" class="save-button"> Save </button>
-             <a href="{%url 'variants' product_id%}" class="discard-button">Discard</a>
-        </form>
+    <button type="submit" class="save-button"> Save </button>
+    <a href="{%url 'variants' product_id%}" class="discard-button">Discard</a>
+</form>
     </div>
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         // Select the form element
-        const form = document.querySelector('form');
+        const form = document.querySelector('form[name="editForm"]');
 
         // Add event listener to the form submission
         form.addEventListener('submit', function (event) {
@@ -124,10 +118,18 @@
                 event.preventDefault();
             }
 
-            // Trim and validate color and size
+            // Validate color and size
             const colorInput = form.querySelector('input[name="color"]');
-            const trimmedColor = colorInput.value.trim();
-            colorInput.value = trimmedColor;
+            const originalColor = colorInput.value;
+            const trimmedColor = originalColor.trim();
+
+            if (originalColor !== trimmedColor) {
+                if (!confirm('Color has extra spaces at the beginning. Do you want to trim them?')) {
+                    event.preventDefault();
+                    return;
+                }
+                colorInput.value = trimmedColor;
+            }
 
             const trimmedSize = sizeInput.value.trim();
             sizeInput.value = trimmedSize;
@@ -164,6 +166,7 @@
         });
     });
 </script>
+
 
 </body>
 </html>    

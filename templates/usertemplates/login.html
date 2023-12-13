@@ -8,7 +8,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sign up</title>
+    <title>Login</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -48,21 +48,22 @@
 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endfor %}
-<form action="/login" method="post">{% csrf_token %}
-<label class="text-black mt-3">Email</label>
-<div class="form-group">
-    <input type="text" class="form-control" name="email" Required>    
-</div>
-<label class="text-black mt-3">Password</label>
-<div class="form-group">
-    <input type="password" class="form-control" name="password" Required>
-</div>
+<form action="/login" method="post" onsubmit="return validateLoginForm()">
+    {% csrf_token %}
+    <label class="text-black mt-3">Email</label>
+    <div class="form-group">
+        <input type="text" class="form-control" name="email" required>
+    </div>
+    <label class="text-black mt-3">Password</label>
+    <div class="form-group">
+        <input type="password" class="form-control" name="password" required>
+    </div>
 
-<div class="d-grid gap-2 mt-4">
-    <button class="btn btn-dark" type="submit">Login</button>
-</div>
-
+    <div class="d-grid gap-2 mt-4">
+        <button class="btn btn-dark" type="submit">Login</button>
+    </div>
 </form>
+
 <br>
 <p>Not a User? <a href="/signup">Sign up</a></p>
 </div>
@@ -74,31 +75,38 @@
  
 
 
-{% endblock  %}
+
 <script>
     function validateLoginForm() {
-        var emailInput = document.getElementById('emailInput');
-        var passwordInput = document.getElementById('passwordInput');
+        var email = document.getElementsByName('email')[0].value.trim();
+        var password = document.getElementsByName('password')[0].value.trim();
 
-        // Check if email and password are not empty
-        if (emailInput.value.trim() === '') {
-            alert('Please enter your email.');
+        // Reset error messages
+        document.getElementById('emailError').innerText = "";
+        document.getElementById('passwordError').innerText = "";
+
+        // Validate email
+        if (email === "") {
+            alert("Please enter your email.");
             return false;
         }
 
-        if (passwordInput.value.trim() === '') {
-            alert('Please enter your password.');
+        // Validate password
+        if (password === "") {
+            alert("Please enter your password.");
             return false;
         }
 
-        // You can add more complex validation logic here if needed
+        // Now you can send the form data to the server using AJAX or other methods.
 
-        // If all validation passes, return true to submit the form
         return true;
     }
 </script>
+</body>
+</html>
 
 
 
 
  
+{% endblock  %}
